@@ -20,14 +20,14 @@ const paymentChannels=[
 ]
 const Svg=({children}:{children:React.ReactNode})=><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">{children}</svg>
 const pbbServices=[
-  {icon:<Svg><path d="M5 3h10l4 4v14H5V3Z"/><path d="M15 3v5h4M8 12h5M8 16h3"/><circle cx="16.5" cy="16.5" r="2.5"/><path d="m18.3 18.3 2 2"/></Svg>,title:'Cek tagihan',copy:'Lihat nominal dan rincian PBB berdasarkan NOP.'},
-  {icon:<Svg><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2M7 4 4 7H4"/></Svg>,title:'Lihat histori',copy:'Pantau pembayaran PBB dari tahun ke tahun dalam satu halaman.'},
-  {icon:<Svg><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h4"/><path d="m15 15 1.5 1.5L20 13"/></Svg>,title:'Bayar aman',copy:'Lanjutkan pembayaran melalui kanal digital resmi.'}
+  {icon:<Svg><path d="M5 3h10l4 4v14H5V3Z"/><path d="M15 3v5h4M8 12h5M8 16h3"/><circle cx="16.5" cy="16.5" r="2.5"/><path d="m18.3 18.3 2 2"/></Svg>,title:'Cek Tagihan',copy:'Lihat nominal dan rincian PBB berdasarkan NOP.'},
+  {icon:<Svg><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2M7 4 4 7H4"/></Svg>,title:'Lihat Histori',copy:'Pantau pembayaran PBB dari tahun ke tahun dalam satu halaman.'},
+  {icon:<Svg><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h4"/><path d="m15 15 1.5 1.5L20 13"/></Svg>,title:'Bayar Aman',copy:'Lanjutkan pembayaran melalui kanal digital resmi.'}
 ]
 const otherServices=[
-  {icon:pbbServices[0].icon,title:'Cek ketetapan',copy:'Lihat rincian ketetapan pajak daerah berdasarkan NOPD.'},
-  {icon:pbbServices[1].icon,title:'Lihat status',copy:'Pantau status dan informasi pembayaran pajak daerah Anda.'},
-  {icon:pbbServices[2].icon,title:'Bayar aman',copy:'Gunakan kanal pembayaran pajak daerah yang resmi dan terpercaya.'}
+  {icon:pbbServices[0].icon,title:'Cek Ketetapan',copy:'Lihat rincian ketetapan pajak daerah berdasarkan NOPD.'},
+  {icon:pbbServices[1].icon,title:'Lihat Status',copy:'Pantau status dan informasi pembayaran pajak daerah Anda.'},
+  {icon:pbbServices[2].icon,title:'Bayar Aman',copy:'Gunakan kanal pembayaran pajak daerah yang resmi dan terpercaya.'}
 ]
 export default function HomePage(){
   const [tab,setTab]=useState<'pbb'|'other'>('pbb'),[value,setValue]=useState(''),[nopd,setNopd]=useState(''),[error,setError]=useState('');const input=useRef<HTMLInputElement>(null),nav=useNavigate()
