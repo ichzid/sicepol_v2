@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import {Navigate,useNavigate,useParams} from 'react-router-dom';
 import {AppHeader} from '../components/AppHeader';
-import {AppFooter} from '../components/AppFooter';
 import {BillingCard} from '../components/BillingCard';
 import {Loading} from '../components/States';
 import {methods} from '../data/mockPbb';
@@ -54,6 +53,5 @@ export default function PaymentMethodPage(){
         {q.data&&<BillingCard data={q.data}/>} 
       </section>}
     </main>
-    <AppFooter/>
   </div>;
 }
