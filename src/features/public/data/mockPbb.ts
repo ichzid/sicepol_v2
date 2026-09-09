@@ -1,12 +1,12 @@
 import type {PaymentMethod,PbbDetail,PbbRecord} from '../types/pbb'
-import bankSumut from '../../channels/banksumut.png'
-import qris from '../../channels/qris.svg'
-import dana from '../../channels/dana.svg'
-import ovo from '../../channels/ovo.svg'
-import gopay from '../../channels/gopay.svg'
-import pos from '../../channels/pos.png'
-import indomaret from '../../channels/indomaret.png'
-import alfamart from '../../channels/alfamart.png'
+import bankSumut from '../../../../channels/banksumut.png'
+import qris from '../../../../channels/qris.svg'
+import dana from '../../../../channels/dana.svg'
+import ovo from '../../../../channels/ovo.svg'
+import gopay from '../../../../channels/gopay.svg'
+import pos from '../../../../channels/pos.png'
+import indomaret from '../../../../channels/indomaret.png'
+import alfamart from '../../../../channels/alfamart.png'
 const paidDates=['05/09/2024','21/07/2023','15/09/2022','10/09/2021','24/08/2020','17/09/2019','03/09/2018','28/08/2017','12/09/2016','07/09/2015']
 export const records:PbbRecord[]=Array.from({length:12},(_,i)=>{const year=2026-i,unpaid=year>=2025,penalty=year===2025?45500:0;return{year,taxpayerName:'Budi Santoso',dueDate:`30/09/${year}`,penaltyInfo:year===2025?'10 bulan (20%)':'0 bulan (0%)',principal:227500,penalty,total:227500+penalty,paid:unpaid?0:227500,paidDate:unpaid?'-':paidDates[2024-year],status:unpaid?'Belum':'Lunas'}})
 export function mockDetail(nop:string,year:number):PbbDetail|undefined{const record=records.find(x=>x.year===year);if(!record)return;return{...record,nop,objectAddress:'Desa Perkebunan Lima Puluh, Kabupaten Batu Bara',taxpayerAddress:'Jl. Merdeka No. 10, Lima Puluh',npwp:'12.345.678.9-***.***',earthArea:240,buildingArea:96,earthRate:500000,buildingRate:750000,earthNjop:120000000,buildingNjop:72000000,totalNjop:192000000,njoptkp:10000000,taxableNjop:182000000,taxRate:.00125}}
