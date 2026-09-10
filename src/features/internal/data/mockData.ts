@@ -1,11 +1,11 @@
 import type { Row } from '../types';
 
 export const incomeRows: Row[] = [
-  { jenis: 'PBB-P2', target: 86000000000, ketetapan: 83250000000, realisasi: 64860000000, piutang: 18390000000, capaian: '75,4%', updated: '8 Sep 2026, 09.30' },
-  { jenis: 'BPHTB', target: 72000000000, ketetapan: 75800000000, realisasi: 61320000000, piutang: 14480000000, capaian: '85,2%', updated: '8 Sep 2026, 09.25' },
-  { jenis: 'Pajak Daerah Lainnya', target: 98000000000, ketetapan: 95140000000, realisasi: 78150000000, piutang: 16990000000, capaian: '79,7%', updated: '8 Sep 2026, 09.18' },
-  { jenis: 'Retribusi Daerah', target: 42000000000, ketetapan: 38500000000, realisasi: 29420000000, piutang: 9080000000, capaian: '70,0%', updated: '8 Sep 2026, 08.55' },
-  { jenis: 'Makan Minum OPD', target: 18000000000, ketetapan: 17200000000, realisasi: 14050000000, piutang: 3150000000, capaian: '78,1%', updated: '8 Sep 2026, 09.10' },
+  { jenis: 'PBB-P2', target: 86000000000, realisasi: 64860000000, capaian: '75,4%', sisaTarget: 21140000000 },
+  { jenis: 'BPHTB', target: 72000000000, realisasi: 61320000000, capaian: '85,2%', sisaTarget: 10680000000 },
+  { jenis: 'Pajak Daerah Lainnya', target: 98000000000, realisasi: 78150000000, capaian: '79,7%', sisaTarget: 19850000000 },
+  { jenis: 'Retribusi Daerah', target: 42000000000, realisasi: 29420000000, capaian: '70,0%', sisaTarget: 12580000000 },
+  { jenis: 'Makan Minum OPD', target: 18000000000, realisasi: 14050000000, capaian: '78,1%', sisaTarget: 3950000000 },
 ];
 
 export const reportRows: Row[] = [

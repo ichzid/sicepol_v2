@@ -369,11 +369,12 @@ Portal internal menggunakan layout sidebar, header pengguna, filter periode, sta
 2. Angka laporan dapat direkonsiliasi dengan aplikasi sumber.
 3. Setiap laporan menunjukkan sumber dan waktu pembaruan data.
 4. Filter dan pagination diproses pada server.
-5. Ekspor Excel memuat seluruh data sesuai filter.
-6. Gangguan pada satu aplikasi sumber tidak membuat seluruh dashboard gagal dibuka.
-7. Hak akses BPK bersifat terbatas dan read-only.
-8. Aktivitas akses dan ekspor dapat ditelusuri melalui audit log.
-9. Portal publik SICEPOL tetap berjalan tanpa tercampur dengan fitur internal.
+5. State filter halaman disimpan dalam URL query string (contoh: `?tahun=2026&jenis=pajak`) agar tetap konsisten setelah refresh, dapat dibagikan, di-bookmark, serta mendukung navigasi Back/Forward browser. Prinsip ini diterapkan pada dashboard dan fitur laporan lain yang memiliki filter, dengan nilai default dan validasi parameter yang sesuai tiap halaman.
+6. Ekspor Excel memuat seluruh data sesuai filter.
+7. Gangguan pada satu aplikasi sumber tidak membuat seluruh dashboard gagal dibuka.
+8. Hak akses BPK bersifat terbatas dan read-only.
+9. Aktivitas akses dan ekspor dapat ditelusuri melalui audit log.
+10. Portal publik SICEPOL tetap berjalan tanpa tercampur dengan fitur internal.
 
 ## 16. Prioritas Awal
 
