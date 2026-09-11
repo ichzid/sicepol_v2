@@ -1,7 +1,6 @@
 import {useRef,useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {formatNop,nopDigits} from '../utils/format'
-import logo from '../../../../logo.png'
 import faqImage from '../../../assets/faq.jpeg'
 import bankSumut from '../../../../channels/banksumut.png'
 import bri from '../../../../channels/bri.svg'
@@ -13,6 +12,7 @@ import dana from '../../../../channels/dana.svg'
 import gopay from '../../../../channels/gopay.svg'
 import qris from '../../../../channels/qris.svg'
 
+const logo='/logo.png'
 const paymentChannels=[
   {name:'Bank Sumut',logo:bankSumut},{name:'BRI',logo:bri},{name:'BTN',logo:btn},
   {name:'Kantor Pos',logo:pos},{name:'Indomaret',logo:indomaret},{name:'Alfamart',logo:alfamart},

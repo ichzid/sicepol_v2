@@ -1,4 +1,5 @@
-import { Navigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Navigate, useLocation, useParams } from 'react-router-dom';
 import { localTaxMenus } from '../config/navigation';
 import { reportMeta } from '../config/reports';
 import { opdMealRows, reportRows, retributionRows, simpadaRows } from '../data/mockData';
@@ -42,20 +43,28 @@ const simpadaColumns = [
 
 export function ReportPage({ notify, kind: fixedKind }: { notify: Notify; kind?: string }) {
   const { taxType } = useParams();
+  const location = useLocation();
   const kind = taxType ? 'taxes' : fixedKind || 'pbb';
   const meta = reportMeta[kind] || reportMeta.pbb;
   const selectedTax = localTaxMenus.find(([slug]) => slug === taxType);
-
-  if (taxType && !selectedTax) return <Navigate to="/internal" replace />;
-
+  const requestedTab = new URLSearchParams(location.search).get('tab');
+  const activeTab = requestedTab && meta.tabs.includes(requestedTab) ? requestedTab : meta.tabs[0];
   const isSimpada = kind === 'taxes' && selectedTax;
-  const title = isSimpada ? `Laporan ${selectedTax[1]}` : meta.title;
+  const reportName = isSimpada ? selectedTax[1] : meta.title.replace(/^Laporan\s+/, '');
+  const pageTitle = `Data ${activeTab} ${reportName}`;
+  const browserTitle = `${pageTitle} | SICEPOL`;
   const description = isSimpada
     ? `Monitoring dan laporan ${selectedTax[1]} yang bersumber dari aplikasi e-Simpada.`
     : meta.description;
 
+  useEffect(() => {
+    document.title = browserTitle;
+  }, [browserTitle]);
+
+  if (taxType && !selectedTax) return <Navigate to="/internal" replace />;
+
   return <>
-    <PageHeader title={title} description={description} action={<ExportButton notify={notify} />} />
+    <PageHeader title={pageTitle} description={description} action={<ExportButton notify={notify} />} />
     <Tabs items={meta.tabs} />
     {isSimpada
       ? <SimpadaFilterPanel onApply={() => notify('Filter laporan berhasil diterapkan.')} />

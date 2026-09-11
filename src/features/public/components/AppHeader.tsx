@@ -1,4 +1,4 @@
 import {Link} from 'react-router-dom'
 import {ArrowLeftIcon} from './Icons'
-import logo from '../../../../logo.png'
+const logo='/logo.png'
 export function AppHeader({backTo='/',backLabel='Kembali ke Beranda'}:{backTo?:string;backLabel?:string}){return <header className="topbar"><div className="container nav"><Link className="agency" to="/"><img src={logo} alt="Logo Kabupaten Batu Bara"/><span className="agency-copy"><small>Pemerintah Kabupaten Batu Bara</small><strong>Bapenda · SICEPOL</strong></span></Link><Link className="back" to={backTo} aria-label={backLabel}><ArrowLeftIcon/><span className="back-label">{backLabel}</span></Link></div></header>}
