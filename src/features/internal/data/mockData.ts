@@ -18,23 +18,6 @@ export const reportRows: Row[] = [
   { nomor: '32.71.010.008.001-0188.0', nama: 'Restoran Selera Kita', wilayah: 'Kec. Balikpapan Kota', tanggal: '20 Agu 2026', ketetapan: 8900000, pembayaran: 7000000, status: 'Sebagian' },
 ];
 
-export const simpadaRows: Row[] = [
-  { npwpd: 'P.1.0001234.01.01', sptpd: 'SPTPD/2026/000741', tanggalCetak: '05 Jul 2026', masaPajak: 'Juni 2026', namaObjek: 'Hotel Samudra', alamatObjek: 'Jl. Perintis Kemerdekaan, Lima Puluh', nilaiPajak: 18750000, status: 'Lunas' },
-  { npwpd: 'P.1.0001288.01.01', sptpd: 'SPTPD/2026/000742', tanggalCetak: '05 Jul 2026', masaPajak: 'Juni 2026', namaObjek: 'Restoran Selera Kita', alamatObjek: 'Jl. Merdeka, Air Putih', nilaiPajak: 8900000, status: 'Sebagian' },
-  { npwpd: 'P.1.0001341.01.01', sptpd: 'SPTPD/2026/000743', tanggalCetak: '06 Jul 2026', masaPajak: 'Juni 2026', namaObjek: 'Taman Rekreasi Bahagia', alamatObjek: 'Jl. Lintas Sumatera, Indrapura', nilaiPajak: 12250000, status: 'Belum Lunas' },
-  { no: 4, npwpd: 'P.1.0001402.01.01', sptpd: 'SPTPD/2026/000744', tanggalCetak: '06 Jul 2026', masaPajak: 'Juni 2026', namaObjek: 'Parkir Plaza Batu Bara', alamatObjek: 'Jl. Sudirman, Tanjung Gading', nilaiPajak: 4850000, status: 'Lunas' },
-  { no: 5, npwpd: 'P.1.0001467.01.01', sptpd: 'SPTPD/2026/000745', tanggalCetak: '07 Jul 2026', masaPajak: 'Juni 2026', namaObjek: 'Reklame Cahaya Timur', alamatObjek: 'Jl. Acces Road Inalum, Kuala Tanjung', nilaiPajak: 3250000, status: 'Belum Lunas' },
-  { no: 6, npwpd: 'P.1.0001519.01.01', sptpd: 'SPTPD/2026/000746', tanggalCetak: '07 Jul 2026', masaPajak: 'Juni 2026', namaObjek: 'PLN Unit Batu Bara', alamatObjek: 'Jl. Pendidikan, Lima Puluh', nilaiPajak: 26750000, status: 'Lunas' },
-  { npwpd: 'P.1.0001583.01.01', sptpd: 'SPTPD/2026/000747', tanggalCetak: '08 Jul 2026', masaPajak: 'Juni 2026', namaObjek: 'CV Mineral Sejahtera', alamatObjek: 'Desa Mangkai Baru, Lima Puluh', nilaiPajak: 15400000, status: 'Sebagian' },
-];
-
-export const opdMealRows: Row[] = [
-  { inputDate: '05 Jul 2026', npwpd: 'P.1.0001288.01.01', sptpd: 'SPTPD/2026/000742', opd: 'Sekretariat Daerah', taxPeriod: 'Juni 2026', taxAmount: 4250000, status: 'Lunas', action: 'Detail' },
-  { inputDate: '06 Jul 2026', npwpd: 'P.1.0001341.01.01', sptpd: 'SPTPD/2026/000743', opd: 'Dinas Kesehatan', taxPeriod: 'Juni 2026', taxAmount: 3150000, status: 'Sebagian', action: 'Detail' },
-  { inputDate: '07 Jul 2026', npwpd: 'P.1.0001402.01.01', sptpd: 'SPTPD/2026/000744', opd: 'Dinas Pendidikan', taxPeriod: 'Juni 2026', taxAmount: 5800000, status: 'Belum Lunas', action: 'Detail' },
-  { inputDate: '08 Jul 2026', npwpd: 'P.1.0001467.01.01', sptpd: 'SPTPD/2026/000745', opd: 'Dinas PUPR', taxPeriod: 'Juni 2026', taxAmount: 2750000, status: 'Lunas', action: 'Detail' },
-];
-
 export const retributionRows: Row[] = [
   { no: 1, formNumber: 'FORM/RET/2026/00124', opd: 'Dinas Lingkungan Hidup', transactionDate: '05 Jul 2026', npwrd: 'R.1.000124.01', period: 'Juni 2026', type: 'Pelayanan Kebersihan', amount: 2750000, status: 'Lunas', action: 'Detail' },
   { no: 2, formNumber: 'FORM/RET/2026/00125', opd: 'Dinas Kesehatan', transactionDate: '06 Jul 2026', npwrd: 'R.1.000125.01', period: 'Juni 2026', type: 'Pelayanan Kesehatan', amount: 1850000, status: 'Sebagian', action: 'Detail' },

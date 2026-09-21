@@ -101,11 +101,11 @@ export function Dashboard({ notify }: { notify: Notify }) {
         </div>
 
         <DataTable columns={[
-          {key:'jenis',label:'Jenis Pendapatan'},
-          {key:'target',label:'Target',money:true},
-          {key:'realisasi',label:'Realisasi',money:true},
-          {key:'capaian',label:'Capaian'},
-          {key:'sisaTarget',label:'Sisa Target',money:true},
+          {key:'jenis',label:'Jenis Pendapatan',width:'32%'},
+          {key:'target',label:'Target',money:true,width:'17%'},
+          {key:'realisasi',label:'Realisasi',money:true,width:'17%'},
+          {key:'capaian',label:'Capaian',width:'17%'},
+          {key:'sisaTarget',label:'Sisa Target',money:true,width:'17%'},
         ]} rows={rows} initialSort={false} search={false} pagination={false} title={`Rincian Per Jenis ${revenueLabel}`}/>
       </>}
   </>;

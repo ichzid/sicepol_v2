@@ -12,6 +12,7 @@ export const UserIcon=(p:IconProps)=><Base {...p}><circle cx="12" cy="8" r="4"/>
 export const CalculatorIcon=(p:IconProps)=><Base {...p}><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8v4H8zM8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></Base>
 export const ReceiptIcon=(p:IconProps)=><Base {...p}><path d="M6 3h12v19l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 8h6M9 12h6M9 16h4"/></Base>
 export const DownloadIcon=(p:IconProps)=><Base {...p}><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 20h16"/></Base>
+export const PrintIcon=(p:IconProps)=><Base {...p}><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7" rx="1"/><path d="M18 12h.01"/></Base>
 export const ArrowLeftIcon=(p:IconProps)=><Base {...p}><path d="m15 18-6-6 6-6"/></Base>
 export const InfoIcon=(p:IconProps)=><Base {...p}><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></Base>
 export const AnnouncementIcon=(p:IconProps)=><Base {...p}><path d="m3 11 15-6v14L3 13v-2Z"/><path d="m7 14 2 6h4l-2-5M21 9v6"/></Base>

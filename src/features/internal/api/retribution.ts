@@ -1,0 +1,8 @@
+import type { RetributionRecapParams, RetributionRecapResponse, RetributionReportParams, RetributionReportResponse, RetributionSourcesResponse } from '../types/retribution';
+import { compactSimpadaParams, simpadaApi } from './simpada';
+
+export async function getRetributionSources(signal?: AbortSignal) { return (await simpadaApi.get<RetributionSourcesResponse>('/v1/reports/retribusi/sources', { signal })).data; }
+export async function getRetributionReport(params: RetributionReportParams, signal?: AbortSignal) { return (await simpadaApi.get<RetributionReportResponse>('/v1/reports/retribusi/monitoring', { params: compactSimpadaParams(params), signal })).data; }
+export async function exportRetributionReport(params: RetributionReportParams) { const exportParams = { ...compactSimpadaParams(params) }; delete exportParams.page; delete exportParams.per_page; return simpadaApi.get<Blob>('/v1/reports/retribusi/monitoring/export', { params: exportParams, responseType: 'blob', headers: { Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } }); }
+export async function getRetributionRecap(params: RetributionRecapParams, signal?: AbortSignal) { return (await simpadaApi.get<RetributionRecapResponse>('/v1/reports/retribusi/rekap-opd', { params: compactSimpadaParams(params), signal })).data; }
+export async function exportRetributionRecap(params: RetributionRecapParams) { const exportParams = { ...compactSimpadaParams(params) }; delete exportParams.page; delete exportParams.per_page; return simpadaApi.get<Blob>('/v1/reports/retribusi/rekap-opd/export', { params: exportParams, responseType: 'blob', headers: { Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } }); }

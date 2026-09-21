@@ -1,7 +1,13 @@
-export const localTaxMenus = [
-  ['electricity', 'PBJT Tenaga Listrik'], ['food-drink', 'PBJT Makan Minum'], ['hotel', 'PBJT Hotel'],
-  ['parking', 'PBJT Parkir'], ['entertainment', 'PBJT Hiburan'], ['swallow', 'Pajak Sarang Walet'],
-  ['billboard', 'Pajak Reklame'], ['mblb', 'Pajak MBLB'], ['groundwater', 'Pajak Air Tanah'],
+export const localTaxMenus: ReadonlyArray<readonly [string, string]> = [
+  ['pbjt-tenaga-listrik', 'PBJT Tenaga Listrik'],
+  ['pbjt-makan-minum', 'PBJT Makan Minum'],
+  ['pbjt-hotel', 'PBJT Hotel'],
+  ['pbjt-parkir', 'PBJT Parkir'],
+  ['pbjt-hiburan', 'PBJT Hiburan'],
+  ['pajak-sarang-burung-walet', 'Pajak Sarang Walet'],
+  ['pajak-reklame', 'Pajak Reklame'],
+  ['pajak-mblb', 'Pajak MBLB'],
+  ['pajak-air-tanah', 'Pajak Air Tanah'],
 ];
 
 export const nav = [

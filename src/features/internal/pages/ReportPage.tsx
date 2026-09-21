@@ -1,84 +1,85 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useLocation, useParams } from 'react-router-dom';
-import { localTaxMenus } from '../config/navigation';
 import { reportMeta } from '../config/reports';
-import { opdMealRows, reportRows, retributionRows, simpadaRows } from '../data/mockData';
-import type { Notify } from '../types';
-import { DataTable, ExportButton, FilterPanel, OpdMealsFilterPanel, PageHeader, RetributionFilterPanel, SimpadaFilterPanel, Tabs } from '../components/Shared';
+import { reportRows } from '../data/mockData';
+import type { Column, Notify } from '../types';
+import type { EsptpdReportParams, EsptpdSortField, OpdMealRecapParams, OpdMealRecapSortField, RekapWpParams, RekapWpSortField, SimpadaReportType, SimpadaSortDirection, SimpadaSortField } from '../types/simpada';
+import { adaptEsptpdPagination, adaptEsptpdRows, adaptOpdMealRecapPagination, adaptOpdMealRecapRows, adaptRekapWpPagination, adaptRekapWpRows, adaptSimpadaPagination, adaptSimpadaRows } from '../types/simpada';
+import { exportEsptpdMealReport, exportOpdMealRecapReport, exportRekapWpReport, exportSimpadaReport, getApiErrorMessage, getExportFilename } from '../api/simpada';
+import { useEsptpdMealReport, useOpdMealRecapReport, useRekapWpReport, useSimpadaReport, useSimpadaSources } from '../hooks/useSimpadaReport';
+import { DataTable, ExportButton, FilterPanel, PageHeader, SimpadaFilterPanel, Tabs, type SimpadaFilter } from '../components/Shared';
+import { RetributionReportPage } from './RetributionReportPage';
 
-const opdMealColumns = [
-  { key: 'inputDate', label: 'Tanggal Transaksi', width: '12%' },
-  { key: 'npwpd', label: 'No NPWPD', width: '14%' },
-  { key: 'sptpd', label: 'No SPTPD', width: '15%' },
-  { key: 'taxPeriod', label: 'Masa Pajak', width: '12%' },
-  { key: 'opd', label: 'Nama OPD', width: '21%' },
-  { key: 'taxAmount', label: 'Nilai Pajak', money: true, width: '12%' },
-  { key: 'status', label: 'Status Bayar', width: '9%' },
-  { key: 'action', label: 'Action', width: '7%' },
-];
-
-const retributionColumns = [
-  { key: 'transactionDate', label: 'Tanggal Transaksi', width: '12%' },
-  { key: 'npwrd', label: 'No NPWRD', width: '12%' },
-  { key: 'formNumber', label: 'No Form', width: '14%' },
-  { key: 'period', label: 'Masa Retribusi', width: '11%' },
-  { key: 'opd', label: 'Nama OPD', width: '17%' },
-  { key: 'type', label: 'Jenis Retribusi', width: '18%' },
-  { key: 'amount', label: 'Jumlah Bayar', money: true, width: '10%' },
-  { key: 'status', label: 'Status Bayar', width: '9%' },
-  { key: 'action', label: 'Aksi', width: '7%' },
-];
-
-const simpadaColumns = [
-  { key: 'tanggalCetak', label: 'Tanggal Cetak', width: '10%' },
-  { key: 'npwpd', label: 'No NPWPD', width: '14%' },
-  { key: 'sptpd', label: 'No SPTPD', width: '13%' },
-  { key: 'masaPajak', label: 'Masa Pajak', width: '10%' },
-  { key: 'namaObjek', label: 'Nama Objek', width: '14%' },
-  { key: 'alamatObjek', label: 'Alamat Objek', width: '20%' },
-  { key: 'nilaiPajak', label: 'Nilai Pajak', money: true, width: '11%' },
-  { key: 'status', label: 'Status Bayar', width: '8%' },
-  { key: 'action', label: 'Action', width: '7%' },
-];
+const esptpdColumnDefinitions: Record<EsptpdSortField, Column> = {
+  no:{key:'no',label:'No'}, tanggal_input:{key:'tanggal_input',label:'Tanggal Input',width:'11%'}, no_npwpd:{key:'no_npwpd',label:'No NPWPD',width:'14%'}, no_sptpd:{key:'no_sptpd',label:'No SPTPD',width:'17%'}, nama_instansi:{key:'nama_instansi',label:'Nama Instansi',width:'20%'}, alamat_instansi:{key:'alamat_instansi',label:'Alamat Instansi'}, nama_usaha:{key:'nama_usaha',label:'Nama Usaha'}, alamat_usaha:{key:'alamat_usaha',label:'Alamat Usaha'}, masa_pajak:{key:'masa_pajak',label:'Masa Pajak',width:'13%'}, nilai_pajak:{key:'nilai_pajak',label:'Nilai Pajak',money:true,width:'13%'}, status_bayar:{key:'status_bayar',label:'Status Bayar',width:'12%'}, tanggal_bayar:{key:'tanggal_bayar',label:'Tanggal Bayar'}, nomor_sts:{key:'nomor_sts',label:'Nomor STS'},
+};
+const esptpdSortableFields = new Set<EsptpdSortField>(Object.keys(esptpdColumnDefinitions) as EsptpdSortField[]);
+const visibleEsptpdFields: EsptpdSortField[] = ['no_npwpd','no_sptpd','nama_instansi','masa_pajak','tanggal_input','nilai_pajak','status_bayar'];
+export function buildEsptpdColumns(fields: EsptpdSortField[] = []) { const available = new Set(fields.length ? fields : visibleEsptpdFields); return visibleEsptpdFields.filter(field => available.has(field)).map(field => esptpdColumnDefinitions[field]).filter(Boolean); }
+const simpadaColumnDefinitions: Record<string, Column> = {
+  number:{key:'number',label:'Nomor'}, document_number:{key:'document_number',label:'No SKPD'}, taxpayer_number:{key:'taxpayer_number',label:'No NPWPD'}, taxpayer_name:{key:'taxpayer_name',label:'Nama Wajib Pajak'}, address:{key:'address',label:'Alamat'}, tax_period:{key:'tax_period',label:'Masa Pajak'}, assessment_date:{key:'assessment_date',label:'Tgl Cetak'}, payment_date:{key:'payment_date',label:'Tanggal Bayar'}, due_date:{key:'due_date',label:'Tanggal Jatuh Tempo'}, penalty_months:{key:'penalty_months',label:'Bulan Denda'}, principal_amount:{key:'principal_amount',label:'Nilai Pajak',money:true}, penalty_amount:{key:'penalty_amount',label:'Jumlah Denda',money:true}, total_amount:{key:'total_amount',label:'Total',money:true}, payment_status:{key:'payment_status',label:'Status Pembayaran'}, kohir:{key:'kohir',label:'Kohir'}, payment_code:{key:'payment_code',label:'Kode Pembayaran'}, details:{key:'details',label:'Detail'},
+};
+const reportTypes: Record<string, SimpadaReportType> = { Monitoring:'monitoring', Ketetapan:'ketetapan', Realisasi:'realisasi', Piutang:'piutang' };
+const sortableFields = new Set<SimpadaSortField>(['number','document_number','taxpayer_number','taxpayer_name','address','tax_period','assessment_date','payment_date','due_date','principal_amount','penalty_amount','total_amount','payment_status','kohir','payment_code']);
+const excludedSimpadaColumns = new Set(['number','due_date','penalty_months','penalty_amount','total_amount','payment_date','details']);
+const rekapWpFieldOrder: RekapWpSortField[] = ['taxpayer_number','taxpayer_name','address','january','february','march','april','may','june','july','august','september','october','november','december','annual_total'];
+const rekapWpColumnDefinitions: Record<RekapWpSortField, Column> = {
+  number:{key:'number',label:'Nomor'}, taxpayer_number:{key:'taxpayer_number',label:'No NPWPD'}, taxpayer_name:{key:'taxpayer_name',label:'Nama WP/Usaha'}, address:{key:'address',label:'Alamat'}, january:{key:'january',label:'Jan',money:true}, february:{key:'february',label:'Feb',money:true}, march:{key:'march',label:'Mar',money:true}, april:{key:'april',label:'Apr',money:true}, may:{key:'may',label:'Mei',money:true}, june:{key:'june',label:'Jun',money:true}, july:{key:'july',label:'Jul',money:true}, august:{key:'august',label:'Agu',money:true}, september:{key:'september',label:'Sep',money:true}, october:{key:'october',label:'Okt',money:true}, november:{key:'november',label:'Nov',money:true}, december:{key:'december',label:'Des',money:true}, annual_total:{key:'annual_total',label:'Total',money:true},
+};
+const opdMealRecapFieldOrder: OpdMealRecapSortField[] = ['no_npwpd','nama_instansi','alamat_instansi','januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember','total'];
+const opdMealRecapColumnDefinitions: Record<OpdMealRecapSortField, Column> = Object.fromEntries(opdMealRecapFieldOrder.map(field => [field,{key:field,label:field==='no_npwpd'?'No NPWPD':field==='nama_instansi'?'Nama Instansi':field==='alamat_instansi'?'Alamat Instansi':field==='total'?'Total':field[0].toUpperCase()+field.slice(1),...(!['no_npwpd','nama_instansi','alamat_instansi'].includes(field)?{money:true}:{})}])) as Record<OpdMealRecapSortField, Column>;
+const simpadaColumnWeights: Record<string, number> = {
+  document_number:13, taxpayer_number:13, taxpayer_name:16, address:20, tax_period:11, assessment_date:11, payment_date:11, due_date:11, principal_amount:12, penalty_amount:12, total_amount:12, payment_status:12, kohir:12, payment_code:12, action:13,
+};
+export function buildSimpadaColumns(fields: string[], reportType?: SimpadaReportType | null) {
+  const visibleFields = fields.filter(field => !excludedSimpadaColumns.has(field) || reportType === 'realisasi' && field === 'payment_date').filter(field => reportType !== 'realisasi' || !['assessment_date','payment_code'].includes(field));
+  const realizationFields = visibleFields.filter(field => field !== 'payment_date');
+  const ketetapanFields = visibleFields.filter(field => !['assessment_date','principal_amount','payment_status'].includes(field));
+  const orderedFields = reportType === 'realisasi' && visibleFields.includes('payment_date')
+    ? realizationFields.flatMap((field,index) => field === 'principal_amount' || index === realizationFields.length-1 && !realizationFields.includes('principal_amount') ? [field,'payment_date'] : [field])
+    : reportType === 'ketetapan'
+      ? [...ketetapanFields,...(visibleFields.includes('assessment_date') ? ['assessment_date'] : []),...(visibleFields.includes('principal_amount') ? ['principal_amount'] : [])]
+      : visibleFields;
+  const columns = orderedFields.flatMap(field => field === 'payment_status' ? [] : simpadaColumnDefinitions[field] ? [simpadaColumnDefinitions[field]] : []);
+  const activeColumns = reportType === 'ketetapan' ? columns : [...columns, {key:'statusText',label:'Status Bayar'}];
+  const totalWeight = activeColumns.reduce((total, column) => total + (simpadaColumnWeights[column.key] || 12), 0);
+  return activeColumns.map(column => ({...column,width:`${(((simpadaColumnWeights[column.key] || 12) / totalWeight) * 100).toFixed(2)}%`}));
+}
+export function buildRekapWpColumns(fields: string[] = []) {
+  const available = new Set(fields);
+  const ordered = fields.length ? rekapWpFieldOrder.filter(field => available.has(field)) : rekapWpFieldOrder;
+  return ordered.map(field => rekapWpColumnDefinitions[field]);
+}
+export function buildOpdMealRecapColumns(fields: string[] = []) {
+  const available = new Set(fields);
+  return (fields.length ? opdMealRecapFieldOrder.filter(field => available.has(field)) : opdMealRecapFieldOrder).map(field => opdMealRecapColumnDefinitions[field]);
+}
+export function sanitizeExportFilename(title: string) { return `${title.trim().replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase() || 'laporan'}.xlsx`; }
 
 export function ReportPage({ notify, kind: fixedKind }: { notify: Notify; kind?: string }) {
-  const { taxType } = useParams();
-  const location = useLocation();
-  const kind = taxType ? 'taxes' : fixedKind || 'pbb';
-  const meta = reportMeta[kind] || reportMeta.pbb;
-  const selectedTax = localTaxMenus.find(([slug]) => slug === taxType);
-  const requestedTab = new URLSearchParams(location.search).get('tab');
-  const activeTab = requestedTab && meta.tabs.includes(requestedTab) ? requestedTab : meta.tabs[0];
-  const isSimpada = kind === 'taxes' && selectedTax;
-  const reportName = isSimpada ? selectedTax[1] : meta.title.replace(/^Laporan\s+/, '');
-  const pageTitle = `Data ${activeTab} ${reportName}`;
-  const browserTitle = `${pageTitle} | SICEPOL`;
-  const description = isSimpada
-    ? `Monitoring dan laporan ${selectedTax[1]} yang bersumber dari aplikasi e-Simpada.`
-    : meta.description;
-
-  useEffect(() => {
-    document.title = browserTitle;
-  }, [browserTitle]);
-
-  if (taxType && !selectedTax) return <Navigate to="/internal" replace />;
-
-  return <>
-    <PageHeader title={pageTitle} description={description} action={<ExportButton notify={notify} />} />
-    <Tabs items={meta.tabs} />
-    {isSimpada
-      ? <SimpadaFilterPanel onApply={() => notify('Filter laporan berhasil diterapkan.')} />
-      : kind === 'retributions'
-        ? <RetributionFilterPanel onApply={() => notify('Filter laporan berhasil diterapkan.')} />
-        : kind === 'opd-meals'
-          ? <OpdMealsFilterPanel onApply={() => notify('Filter laporan berhasil diterapkan.')} />
-          : <FilterPanel onApply={() => notify('Filter laporan berhasil diterapkan.')} />}
-    {isSimpada
-      ? <DataTable columns={simpadaColumns} rows={simpadaRows} />
-      : kind === 'retributions'
-        ? <DataTable columns={retributionColumns} rows={retributionRows} />
-        : kind === 'opd-meals'
-          ? <DataTable columns={opdMealColumns} rows={opdMealRows} />
-          : <DataTable columns={[{key:'nomor',label:kind==='bphtb'?'Nomor Transaksi':'NOP / NPWPD'},{key:'nama',label:'Wajib Pajak'},{key:'wilayah',label:'Wilayah'},{key:'tanggal',label:'Tanggal'},{key:'ketetapan',label:'Ketetapan',money:true},{key:'pembayaran',label:'Pembayaran',money:true},{key:'status',label:'Status'},{key:'action',label:'Action'}]} rows={reportRows} />}
-  </>;
+  if (fixedKind === 'retributions') return <RetributionReportPage notify={notify}/>;
+  const { taxType } = useParams(); const location = useLocation(); const kind = taxType ? 'taxes' : fixedKind || 'pbb'; const meta = reportMeta[kind] || reportMeta.pbb;
+  const sourcesQuery=useSimpadaSources(); const selectedTax=sourcesQuery.data?.data.find(source=>source.key===taxType); const isTaxRoute=kind==='taxes';
+  const supportedTabs=selectedTax?[...Object.entries(reportTypes).filter(([,type])=>selectedTax.supported_reports.some(item=>item===type||item===`${type}_corrected`)).map(([label])=>label),'Rekap WP']:meta.tabs;
+  const requestedTab = new URLSearchParams(location.search).get('tab'); const activeTab = requestedTab && supportedTabs.includes(requestedTab) ? requestedTab : supportedTabs[0];
+  const isSimpada=isTaxRoute&&Boolean(selectedTax); const isRekap=isSimpada&&activeTab==='Rekap WP'; const reportType=isSimpada&&!isRekap?reportTypes[activeTab]:null; const source=selectedTax?.key;
+  const forceCorrected=reportType==='piutang'&&source==='pbjt-tenaga-listrik'; const isOpdMeals=kind==='opd-meals'; const isOpdRecap=isOpdMeals&&activeTab==='Rekap OPD'; const isEsptpd=isOpdMeals&&!isOpdRecap; const currentYear=new Date().getFullYear(); const [filter,setFilter]=useState<SimpadaFilter>({year:currentYear}); const [search,setSearch]=useState(''); const [debouncedSearch,setDebouncedSearch]=useState('');
+  const [sort,setSort]=useState<{key:string;direction:SimpadaSortDirection}|null>(null); const [page,setPage]=useState(1); const [perPage,setPerPage]=useState(10); const [exporting,setExporting]=useState(false);
+  useEffect(()=>{const timer=window.setTimeout(()=>{setDebouncedSearch(search.slice(0,200));setPage(1)},400);return()=>window.clearTimeout(timer)},[search]);
+  useEffect(()=>{setPage(1)},[filter.year,filter.month,reportType,source,perPage]);
+  const params=useMemo(()=>({year:filter.year,...(filter.month?{month:filter.month}:{}),...(forceCorrected?{mode:'corrected' as const}:{}),...(debouncedSearch?{search:debouncedSearch}:{}),...(sort&&sortableFields.has(sort.key as SimpadaSortField)?{sort_by:sort.key as SimpadaSortField,sort_direction:sort.direction}:{}),page,per_page:perPage}),[filter,forceCorrected,debouncedSearch,sort,page,perPage]);
+  const rekapParams=useMemo<RekapWpParams>(()=>({year:filter.year,...(debouncedSearch?{search:debouncedSearch}:{}),...(sort&&rekapWpFieldOrder.includes(sort.key as RekapWpSortField)?{sort_by:sort.key as RekapWpSortField,sort_direction:sort.direction}:{}),page,per_page:perPage}),[filter.year,debouncedSearch,sort,page,perPage]);
+  const esptpdParams=useMemo<EsptpdReportParams>(()=>({year:filter.year,...(filter.month?{month:filter.month}:{}),...(debouncedSearch?{search:debouncedSearch}:{}),...(sort&&esptpdSortableFields.has(sort.key as EsptpdSortField)?{sort_by:sort.key as EsptpdSortField,sort_direction:sort.direction}:{}),page,per_page:perPage}),[filter,debouncedSearch,sort,page,perPage]);
+  const opdRecapParams=useMemo<OpdMealRecapParams>(()=>({year:filter.year,...(debouncedSearch?{search:debouncedSearch}:{}),...(sort&&opdMealRecapFieldOrder.includes(sort.key as OpdMealRecapSortField)?{sort_by:sort.key as OpdMealRecapSortField,sort_direction:sort.direction}:{}),page,per_page:perPage}),[filter.year,debouncedSearch,sort,page,perPage]);
+  const query=useSimpadaReport(reportType,source,params,!isRekap); const rekapQuery=useRekapWpReport(source,rekapParams,isRekap); const esptpdQuery=useEsptpdMealReport(esptpdParams,isEsptpd); const opdRecapQuery=useOpdMealRecapReport(opdRecapParams,isOpdRecap); const activeQuery=isOpdRecap?opdRecapQuery:isEsptpd?esptpdQuery:isRekap?rekapQuery:query;
+  const pagination=isOpdRecap?adaptOpdMealRecapPagination(opdRecapQuery.data,page,perPage):isEsptpd?adaptEsptpdPagination(esptpdQuery.data,page,perPage):isRekap?adaptRekapWpPagination(rekapQuery.data,page,perPage):adaptSimpadaPagination(query.data,page,perPage); const rows=isOpdRecap?adaptOpdMealRecapRows(opdRecapQuery.data?.data||[]):isEsptpd?adaptEsptpdRows(esptpdQuery.data?.data||[]):isRekap?adaptRekapWpRows(rekapQuery.data?.data||[]):adaptSimpadaRows(query.data?.data||[],reportType); const esptpdColumns=buildEsptpdColumns(esptpdQuery.data?.meta.columns); const opdRecapColumns=buildOpdMealRecapColumns(opdRecapQuery.data?.meta.columns); const simpadaColumns=buildSimpadaColumns(query.data?.meta.columns||[],reportType); const rekapColumns=buildRekapWpColumns(rekapQuery.data?.meta.columns);
+  const reportName=selectedTax?.name||meta.title.replace(/^Laporan\s+/,''); const pageTitle=`Data ${activeTab||''} ${reportName}`; const [errorText,setErrorText]=useState<string>();
+  useEffect(()=>{document.title=`${pageTitle} | SICEPOL`},[pageTitle]); useEffect(()=>{if(activeQuery.error)getApiErrorMessage(activeQuery.error).then(setErrorText);else setErrorText(undefined)},[activeQuery.error]);
+  if(isTaxRoute&&sourcesQuery.isPending)return <section className="in-table-card"><div className="in-empty"><strong>Memuat sumber laporan...</strong></div></section>;
+  if(isTaxRoute&&sourcesQuery.isError)return <section className="in-table-card"><div className="in-empty"><strong>Gagal memuat sumber laporan</strong><span>Daftar jenis pajak tidak tersedia dari API.</span></div></section>;
+  if(taxType&&!selectedTax)return <Navigate to="/internal" replace/>;
+  const download=async()=>{if(!isOpdMeals&&!source)return;setExporting(true);try{const response=isOpdRecap?await exportOpdMealRecapReport(opdRecapParams):isEsptpd?await exportEsptpdMealReport(esptpdParams):isRekap?await exportRekapWpReport(source!,rekapParams):await exportSimpadaReport(reportType!,source!,params);const url=URL.createObjectURL(response.data);const link=document.createElement('a');link.href=url;link.download=getExportFilename(response.headers['content-disposition'] as string | undefined,isOpdRecap?`rekap-instansi-makan-minum-opd-${filter.year}.xlsx`:isEsptpd?`monitoring-makan-minum-opd-${filter.year}${filter.month?`-${filter.month}`:''}.xlsx`:sanitizeExportFilename(pageTitle));document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);}catch(error){notify(`Ekspor gagal: ${await getApiErrorMessage(error)}`)}finally{setExporting(false)}};
+  const activeColumns=isOpdRecap?opdRecapColumns:isEsptpd?esptpdColumns:isRekap?rekapColumns:simpadaColumns;
+  const serverTable=(isSimpada||isOpdMeals)?{query:search,sort:sort?.key||null,direction:sort?.direction||null,page:pagination.page,size:pagination.perPage,total:pagination.total,rowCount:pagination.rowCount,pages:pagination.pages,sortableKeys:activeColumns.filter(column=>isOpdRecap?opdMealRecapFieldOrder.includes(column.key as OpdMealRecapSortField):isEsptpd?esptpdSortableFields.has(column.key as EsptpdSortField):isRekap?rekapWpFieldOrder.includes(column.key as RekapWpSortField):sortableFields.has(column.key as SimpadaSortField)).map(column=>column.key),loading:activeQuery.isFetching,error:errorText,onQueryChange:setSearch,onSortChange:(key:string,direction:SimpadaSortDirection)=>{setSort({key,direction});setPage(1)},onPageChange:setPage,onSizeChange:(size:number)=>{setPerPage(size);setPage(1)}}:undefined;
+  return <><PageHeader title={pageTitle} description={isSimpada?`Monitoring dan laporan ${reportName} yang bersumber dari aplikasi e-Simpada.`:meta.description} action={<ExportButton notify={notify} onClick={isSimpada||isOpdMeals?download:undefined} disabled={exporting} loading={exporting}/>}/><Tabs items={supportedTabs}/>{isSimpada||isOpdMeals?<SimpadaFilterPanel value={filter} paymentPeriod={reportType==='realisasi'} transactionPeriod={isEsptpd} yearOnly={isRekap||isOpdRecap} onApply={next=>{setFilter(next);setPage(1)}}/>:<FilterPanel onApply={()=>{}}/>} {isSimpada||isOpdMeals?<DataTable columns={activeColumns} rows={rows} wide={isRekap||isOpdRecap} fit={isEsptpd} statusInAction={!isEsptpd&&!isOpdRecap&&!isRekap&&reportType!=='ketetapan'} pageSizeOptions={[10,25,50,100]} server={serverTable}/>:<DataTable columns={[{key:'nomor',label:kind==='bphtb'?'Nomor Transaksi':'NOP / NPWPD',width:'17%'},{key:'nama',label:'Wajib Pajak',width:'19%'},{key:'wilayah',label:'Wilayah',width:'17%'},{key:'tanggal',label:'Tanggal',width:'11%'},{key:'ketetapan',label:'Ketetapan',money:true,width:'13%'},{key:'pembayaran',label:'Pembayaran',money:true,width:'13%'},{key:'statusText',label:'Status Bayar',width:'10%'}]} rows={reportRows.map(row=>({...row,statusText:row.status}))}/>}</>;
 }

@@ -19,6 +19,8 @@ const iconPaths: Record<string, ReactNode> = {
   chevron: <path d="m9 18 6-6-6-6"/>, chevronDown: <path d="m6 9 6 6 6-6"/>,
   profile: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
   logout: <><path d="M10 17l5-5-5-5M15 12H3"/><path d="M15 3h5a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-5"/></>,
+  check: <path d="m5 12 4 4L19 6"/>,
+  x: <path d="M6 6l12 12M18 6 6 18"/>,
 };
 
 export function AppIcon({ name }: { name: string }) {

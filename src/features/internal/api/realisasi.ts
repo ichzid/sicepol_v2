@@ -1,8 +1,9 @@
 import axios from 'axios';
 import type { RealisasiResponse, RevenueType, TrenPenerimaanResponse } from '../types';
+import { apiBaseUrl } from './simpada';
 
 const realisasiApi = axios.create({
-  baseURL: 'https://api-bapenda.ichmal.my.id/api',
+  baseURL: apiBaseUrl,
   headers: { Accept: 'application/json' },
   timeout: 10000,
 });
